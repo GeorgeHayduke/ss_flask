@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ title or "Starting Strength MVP" }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {50:'#f0f9ff',100:'#e0f2fe',200:'#bae6fd',300:'#7dd3fc',400:'#38bdf8',500:'#0ea5e9',600:'#0284c7',700:'#0369a1',800:'#075985',900:'#0c4a6e'},
+            secondary:{50:'#f5f3ff',100:'#ede9fe',200:'#ddd6fe',300:'#c4b5fd',400:'#a78bfa',500:'#8b5cf6',600:'#7c3aed',700:'#6d28d9',800:'#5b21b6',900:'#4c1d95'},
+            accent:{50:'#fef2f2',100:'#fee2e2',200:'#fecaca',300:'#fca5a5',400:'#f87171',500:'#ef4444',600:'#dc2626',700:'#b91c1c',800:'#991b1b',900:'#7f1d1d'},
+          },
+          fontFamily: { sans: ['Inter','sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <style>
+    .gradient-bg{background:linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%)}
+    .lift-card{transition:all .3s}
+    .lift-card:hover{transform:translateY(-2px);box-shadow:0 10px 25px -5px rgba(0,0,0,.1)}
+    .work-set{border-left:4px solid #0ea5e9}
+    .warmup-set{border-left:4px solid #94a3b8}
+    .tab-active{border-bottom:3px solid #0ea5e9;color:#0ea5e9;font-weight:600}
+  </style>
+</head>
+<body class="bg-gray-50 font-sans">
+  <header class="gradient-bg text-white shadow-lg">
+    <div class="container mx-auto px-4 py-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <i data-feather="activity" class="w-8 h-8"></i>
+          <h1 class="text-2xl font-bold">Starting Strength MVP</h1>
+        </div>
+        <nav class="hidden md:flex items-center space-x-4">
+          <a href="{{ url_for('dashboard') }}" class="px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-10 {{ 'bg-white bg-opacity-10' if request.path=='/' else '' }}">Dashboard</a>
+          <a href="{{ url_for('setup') }}" class="px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-10 {{ 'bg-white bg-opacity-10' if request.path.startswith('/setup') else '' }}">Setup</a>
+          <a href="{{ url_for('session_view') }}" class="px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-10 {{ 'bg-white bg-opacity-10' if request.path.startswith('/session') else '' }}">Today</a>
+          <a href="{{ url_for('progress') }}" class="px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-10 {{ 'bg-white bg-opacity-10' if request.path.startswith('/progress') else '' }}">Progress</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <footer class="bg-gray-100 border-t border-gray-200 py-6">
+    <div class="container mx-auto px-4 flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <i data-feather="activity" class="w-6 h-6 text-primary-600"></i>
+        <span class="font-medium">Starting Strength MVP</span>
+      </div>
+      <div class="flex space-x-4 text-gray-500">
+        <i data-feather="github" class="w-5 h-5"></i>
+        <i data-feather="twitter" class="w-5 h-5"></i>
+        <i data-feather="mail" class="w-5 h-5"></i>
+      </div>
+    </div>
+  </footer>
+
+  <script>feather.replace();</script>
+</body>
+</html>
+

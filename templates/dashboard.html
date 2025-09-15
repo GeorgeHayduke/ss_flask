@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="bg-white rounded-xl shadow-md p-6 mb-8">
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-2xl font-bold text-gray-800">Your Current Program</h2>
+    <span class="px-3 py-1 bg-primary-100 text-primary-800 rounded-full text-sm font-medium">{{ 'Active' if prog else 'Not Set' }}</span>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <div class="bg-gray-50 p-4 rounded-lg">
+      <div class="text-gray-500 text-sm font-medium">Start Date</div>
+      <div class="text-lg font-semibold">{{ prog.start_date.strftime("%B %d, %Y") if prog else '-' }}</div>
+    </div>
+    <div class="bg-gray-50 p-4 rounded-lg">
+      <div class="text-gray-500 text-sm font-medium">Workouts/Week</div>
+      <div class="text-lg font-semibold">{{ prog.workout_days_per_week ~ " days" if prog else '-' }}</div>
+    </div>
+    <div class="bg-gray-50 p-4 rounded-lg">
+      <div class="text-gray-500 text-sm font-medium">Increment</div>
+      <div class="text-lg font-semibold">{{ (prog.increment_lbs|string) ~ " lbs/session" if prog else '-' }}</div>
+    </div>
+  </div>
+
+  <div class="border-t pt-4">
+    <h3 class="text-lg font-semibold mb-3">Current Lifts</h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {% for name, color, field in [
+        ('Squat','text-primary-500','primary-600'),
+        ('Bench Press','text-secondary-500','secondary-600'),
+        ('Overhead Press','text-accent-500','accent-600'),
+        ('Deadlift','text-gray-500','gray-700')] %}
+      <div class="lift-card bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+        <div class="flex items-center space-x-2 mb-2">
+          <i data-feather="activity" class="w-5 h-5 {{ color }}"></i>
+          <h4 class="font-medium text-gray-700">{{ name }}</h4>
+        </div>
+        <div class="text-2xl font-bold text-{{ field }}">{{ (lifts.get(name).current_weight if lifts.get(name) else 0) }} lbs</div>
+        <div class="text-sm text-gray-500">+{{ prog.increment_lbs if prog else 5 }} lbs next</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<div class="flex space-x-3">
+  <a href="{{ url_for('setup') }}" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg">Setup / Edit Program</a>
+  <a href="{{ url_for('session_view') }}" class="px-4 py-2 bg-gray-800 hover:bg-black text-white rounded-lg">Go to Today’s Session</a>
+</div>
+{% endblock %}
+

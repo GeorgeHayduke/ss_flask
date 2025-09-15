@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block content %}
+<form method="post" class="space-y-6">
+  <div class="bg-white rounded-xl shadow-md p-6">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-bold text-gray-800">Program Setup</h2>
+      <span class="px-3 py-1 bg-primary-100 text-primary-800 rounded-full text-sm font-medium">6 weeks</span>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div>
+        <label class="block text-sm text-gray-600 mb-1">Start Date</label>
+        <input type="date" name="start_date" value="{{ draft_start.isoformat() }}" class="w-full border rounded-lg px-3 py-2">
+      </div>
+      <div>
+        <label class="block text-sm text-gray-600 mb-1">Workouts/Week</label>
+        <select name="wkpw" class="w-full border rounded-lg px-3 py-2">
+          <option value="3" {{ 'selected' if draft_wkpw==3 }}>3</option>
+          <option value="4" {{ 'selected' if draft_wkpw==4 }}>4</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm text-gray-600 mb-1">Increment (lbs/session)</label>
+        <input type="number" name="inc" min="2" max="10" step="1" value="{{ draft_inc }}" class="w-full border rounded-lg px-3 py-2">
+      </div>
+    </div>
+
+    <div class="border-t mt-6 pt-6">
+      <h3 class="text-lg font-semibold mb-3">Starting Working Weights</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {% for label, name, val in [
+          ('Squat','squat', start_weights['Squat']),
+          ('Bench Press','bench', start_weights['Bench Press']),
+          ('Overhead Press','press', start_weights['Overhead Press']),
+          ('Deadlift','deadlift', start_weights['Deadlift']) ] %}
+        <div class="lift-card bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+          <div class="flex items-center space-x-2 mb-2">
+            <i data-feather="activity" class="w-5 h-5 text-primary-500"></i>
+            <h4 class="font-medium text-gray-700">{{ label }}</h4>
+          </div>
+          <input type="number" name="{{ name }}" step="5" min="{{ 65 if label=='Deadlift' else 45 }}" value="{{ val }}" class="w-full border rounded-lg px-3 py-2">
+          <div class="text-sm text-gray-500 mt-1">+{{ draft_inc }} lbs next</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="mt-6 flex justify-end">
+      <button class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg">Save & Generate Plan</button>
+    </div>
+  </div>
+</form>
+
+<div class="bg-white rounded-xl shadow-md p-6 mt-6">
+  <h3 class="text-lg font-semibold mb-3">Expected Progression (6 Weeks)</h3>
+  <div class="rounded-lg border border-gray-200 overflow-hidden">
+    <table class="w-full text-sm">
+      <thead><tr>
+        <th class="px-4 py-2 text-left">Week</th>
+        <th class="px-4 py-2 text-left">Squat</th>
+        <th class="px-4 py-2 text-left">Bench</th>
+        <th class="px-4 py-2 text-left">Press</th>
+        <th class="px-4 py-2 text-left">Deadlift</th>
+      </tr></thead>
+      <tbody>
+        {% for r in projection_rows %}
+          <tr class="border-t">
+            <td class="px-4 py-2">{{ r['Week'] }}</td>
+            <td class="px-4 py-2">{{ r['Squat'] }}</td>
+            <td class="px-4 py-2">{{ r['Bench'] }}</td>
+            <td class="px-4 py-2">{{ r['Press'] }}</td>
+            <td class="px-4 py-2">{{ r['Deadlift'] }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+

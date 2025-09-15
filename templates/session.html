@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+{% if not session %}
+  <div class="bg-white rounded-xl shadow-md p-6">
+    <h2 class="text-xl font-bold text-gray-800 mb-2">All sessions complete 🎉</h2>
+    <p class="text-gray-600">Head to Progress to see your charts.</p>
+  </div>
+{% else %}
+  <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+    <div class="p-6 border-b border-gray-200">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 class="text-xl font-bold text-gray-800">Workout {{ session.workout_type }}</h2>
+          <p class="text-gray-600">{{ session.date.strftime("%B %d, %Y") }}</p>
+        </div>
+        <div class="flex space-x-2 mt-3 sm:mt-0">
+          <form method="post">
+            <input type="hidden" name="action" value="generate">
+            <button class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg">Generate Sets</button>
+          </form>
+          <form method="post">
+            <input type="hidden" name="action" value="complete">
+            <button class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg">Mark Complete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="p-6">
+      <h3 class="text-lg font-semibold mb-4">Main Lifts</h3>
+
+      {% for lift in ['Squat', 'Bench Press', 'Overhead Press', 'Deadlift'] %}
+        {% set sets = sets_by_lift.get(lift, []) %}
+        {% if sets %}
+          {% set work = (sets | selectattr('is_warmup', 'equalto', False) | list) %}
+          {% if work %}{% set ww = work[0].weight %}{% else %}{% set ww = sets[-1].weight %}{% endif %}
+          <div class="mb-8">
+            <div class="flex items-center mb-3">
+              <i data-feather="activity" class="w-5 h-5 text-primary-500 mr-2"></i>
+              <h4 class="font-semibold text-gray-800">{{ lift }} - {{ ww }} lbs</h4>
+            </div>
+            <div class="space-y-2">
+              {% for s in sets if s.is_warmup %}
+                <div class="warmup-set bg-gray-50 p-3 rounded flex justify-between items-center">
+                  <span class="text-gray-600">Warmup: {{ s.weight }} lbs × {{ s.reps }}</span>
+                  <i data-feather="check-circle" class="w-5 h-5 text-gray-500"></i>
+                </div>
+              {% endfor %}
+              {% for s in sets if not s.is_warmup %}
+                <div class="work-set bg-primary-50 p-3 rounded flex justify-between items-center">
+                  <span class="font-medium">Work Set: {{ s.weight }} lbs × {{ s.reps }}</span>
+                  <i data-feather="check-circle" class="w-5 h-5 text-primary-600"></i>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+
+      <div>
+        <h3 class="text-lg font-semibold mb-3">Accessory Work</h3>
+        <div class="bg-gray-50 rounded-lg p-4">
+          {% for name, sr in accessories %}
+          <div class="flex items-start {% if not loop.last %}mb-3{% endif %}">
+            <i data-feather="plus" class="w-5 h-5 text-secondary-500 mr-3 mt-1"></i>
+            <div>
+              <h4 class="font-medium text-gray-800">{{ name }}</h4>
+              <p class="text-gray-600">{{ sr }}</p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+{% endif %}
+{% endblock %}
+
